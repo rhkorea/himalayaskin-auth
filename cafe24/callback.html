@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>카페24 인증 코드</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:640px;margin:10vh auto;padding:0 16px;color:#222;line-height:1.6}
+#box{font-family:ui-monospace,Consolas,monospace;word-break:break-all;background:#f3f3f3;border:1px solid #ccc;border-radius:6px;padding:12px;margin:12px 0}
+button{font-size:16px;padding:8px 16px;cursor:pointer}
+.err{color:#b00020}
+</style>
+</head>
+<body>
+<h1>카페24 인증 코드</h1>
+<p id="msg"></p>
+<div id="box" hidden></div>
+<button id="copy" hidden>주소 복사</button>
+<p id="done"></p>
+<script>
+// 이 페이지는 주소창의 값을 화면에 보여 주기만 한다. 어디로도 보내지 않고 저장하지 않는다.
+(function () {
+  var q = new URLSearchParams(location.search);
+  var msg = document.getElementById('msg'), box = document.getElementById('box'), btn = document.getElementById('copy');
+  if (q.get('error')) {
+    msg.className = 'err';
+    msg.textContent = '승인되지 않았습니다: ' + q.get('error') + ' ' + (q.get('error_description') || '');
+    return;
+  }
+  if (!q.get('code')) {
+    msg.textContent = '인증 코드가 없습니다. 접속 프로그램이 보여 준 승인 주소에서 다시 시작하세요.';
+    return;
+  }
+  var full = location.href;
+  msg.textContent = '아래 주소 전체를 복사해 터미널의 접속 프로그램에 붙여 넣으세요. 1분 안에 넣어야 합니다.';
+  box.textContent = full; box.hidden = false; btn.hidden = false;
+  btn.onclick = function () {
+    navigator.clipboard.writeText(full).then(function () {
+      document.getElementById('done').textContent = '복사했습니다.';
+    });
+  };
+  // 주소창과 방문 기록에 코드가 남지 않게 지운다
+  history.replaceState(null, '', location.pathname);
+})();
+</script>
+</body>
+</html>
